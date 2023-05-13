@@ -9,23 +9,22 @@ with open("response.json", "r") as f:
     response = json.load(f)
 
 # Load the image
-image_url = "https://firebasestorage.googleapis.com/v0/b/code-transcriber.appspot.com/o/misc%2Ftest3.jpg?alt=media&token=ef165a60-294c-4a46-b135-53c339ec7bc1"
+image_url = "https://firebasestorage.googleapis.com/v0/b/code-transcriber.appspot.com/o/misc%2Ftest4.jpg?alt=media&token=26480a5f-8b7e-43b7-81de-b6fffafac426"
 image_data = requests.get(image_url).content
 image_data = np.frombuffer(image_data, dtype=np.uint8)
 image = cv2.imdecode(image_data, cv2.IMREAD_COLOR)
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 # Draw bounding boxes around entire lines
-pages = response["responses"][0]["fullTextAnnotation"]["pages"]
-for page in pages:
-    for block in page["blocks"]:
-        for paragraph in block["paragraphs"]:
-            for line in paragraph["words"]:
-                vertices = line["boundingBox"]["vertices"]
-                pts = [(v["x"], v["y"]) for v in vertices]
-                cv2.polylines(image, [np.array(pts)], True, (0, 255, 0), 2)
+# Loop through each text annotation
+for annotation in response['responses'][0]['textAnnotations']:
+  vertices = annotation['boundingPoly']['vertices']
 
-# Display the image with bounding boxes
-plt.figure(figsize=(10, 10))
-plt.imshow(image)
-plt.axis("off")
-plt.show()
+  # Create an array of points for the bounding box
+  pts = np.array([[vertex['x'], vertex['y']] for vertex in vertices], np.int32)
+  pts = pts.reshape((-1,1,2))
+
+  # Draw the bounding box on the image
+  cv2.polylines(image, [pts], True, (0,255,0), 3)
+
+# Save the image with bounding boxes
+cv2.imwrite('image_with_boxes.jpg', image)

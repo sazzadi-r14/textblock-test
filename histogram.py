@@ -1,5 +1,6 @@
 import json
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 
 with open('response.json') as f:
   data = json.load(f)
@@ -19,7 +20,6 @@ for annotation in data['responses'][0]['textAnnotations']:
 
 
 
-
 fig = go.Figure()
 
 # Add histogram data for x coordinates
@@ -29,7 +29,7 @@ fig.add_trace(go.Histogram(
     xbins=dict( # bins used for histogram
         start=min(x_values),
         end=max(x_values),
-        size=(max(x_values)-min(x_values))/10
+        size=(max(x_values)-min(x_values))/50
     ),
     marker_color='#EB89B5',
     opacity=0.75
@@ -42,7 +42,7 @@ fig.add_trace(go.Histogram(
     xbins=dict(
         start=min(y_values),
         end=max(y_values),
-        size=(max(y_values)-min(y_values))/10
+        size=(max(y_values)-min(y_values))/50
     ),
     marker_color='#330C73',
     opacity=0.75
@@ -59,3 +59,25 @@ fig.update_layout(
 )
 
 fig.show()
+"""
+
+
+
+# Create a new figure
+plt.figure()
+
+# Create a histogram of the x coordinates
+plt.subplot(2, 1, 1)  # 2 rows, 1 column, first plot
+plt.hist(x_values, bins=50)
+plt.title('X Coordinates')
+
+# Create a histogram of the y coordinates
+plt.subplot(2, 1, 2)  # 2 rows, 1 column, second plot
+plt.hist(y_values, bins=50)
+plt.title('Y Coordinates')
+
+# Display the histograms
+plt.tight_layout()
+plt.show()
+
+"""
